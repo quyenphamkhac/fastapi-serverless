@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from starlette.exceptions import ExceptionMiddleware
 from mangum import Mangum
-from .utils.power_tools import logger
+from .utils.power_tools import logger, tracer
 from .routers.logging_router import LoggerRouteHandler
 import uvicorn
 import os
@@ -22,6 +22,7 @@ async def add_correlation_id(request: Request, call_next):
 
     # Add correlation id to logs
     logger.set_correlation_id(corr_id)
+    tracer.put_annotation(key="correlation_id", value=corr_id)
 
     response = await call_next(request)
 
@@ -44,6 +45,8 @@ def get_root():
 
 
 handler = Mangum(app)
+handler.__name__ = "dex_handler"
+handler = tracer.capture_lambda_handler(handler)
 handler = logger.inject_lambda_context(handler, clear_state=True)
 
 if __name__ == "__main__":
