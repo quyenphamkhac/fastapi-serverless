@@ -42,8 +42,10 @@ async def unhandled_exception_handler(request, err):
 @app.get("/")
 def get_root():
     POWERTOOLS_SERVICE_NAME = os.environ.get("POWERTOOLS_SERVICE_NAME")
+    POWERTOOLS_METRICS_NAMESPACE = os.getenv("POWERTOOLS_METRICS_NAMESPACE")
     metrics.add_metric(name="GetRoot", unit=MetricUnit.Count, value=1)
-    logger.info(f"Test fastapi with aws powertools {POWERTOOLS_SERVICE_NAME}")
+    logger.info(
+        f"Test fastapi with aws powertools {POWERTOOLS_SERVICE_NAME} {POWERTOOLS_METRICS_NAMESPACE}")
     return {"message": "FastAPI running in a lambda function"}
 
 
