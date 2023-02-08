@@ -1,4 +1,4 @@
-from utils.power_tools import logger
+from ..utils.power_tools import logger
 from fastapi.routing import APIRoute
 from typing import Callable
 from fastapi import Request, Response
