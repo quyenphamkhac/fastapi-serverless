@@ -1,4 +1,4 @@
-from ..utils.power_tools import logger
+from ..utils.power_tools import logger, metrics, MetricUnit, single_metric
 from fastapi.routing import APIRoute
 from typing import Callable
 from fastapi import Request, Response
@@ -17,6 +17,10 @@ class LoggerRouteHandler(APIRoute):
             }
             logger.append_keys(fastapi=ctx)
             logger.info("Received request")
+
+            with single_metric(name="RequestCount", unit=MetricUnit.Count, value=1) as metric:
+                metric.add_dimension(
+                    name="route", value=f"{request.method} {self.path}")
 
             return await original_route_handler(request)
 

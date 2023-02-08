@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from starlette.exceptions import ExceptionMiddleware
 from mangum import Mangum
-from .utils.power_tools import logger, tracer
+from .utils.power_tools import logger, tracer, metrics, MetricUnit
 from .routers.logging_router import LoggerRouteHandler
 import uvicorn
 import os
@@ -33,6 +33,8 @@ async def add_correlation_id(request: Request, call_next):
 
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request, err):
+    metrics.add_metric(name="UnhandledExceptions",
+                       unit=MetricUnit.Count, value=1)
     logger.exception("Unhandled exception")
     return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
 
@@ -40,6 +42,7 @@ async def unhandled_exception_handler(request, err):
 @app.get("/")
 def get_root():
     POWERTOOLS_SERVICE_NAME = os.environ.get("POWERTOOLS_SERVICE_NAME")
+    metrics.add_metric(name="GetRoot", unit=MetricUnit.Count, value=1)
     logger.info(f"Test fastapi with aws powertools {POWERTOOLS_SERVICE_NAME}")
     return {"message": "FastAPI running in a lambda function"}
 
@@ -48,6 +51,8 @@ handler = Mangum(app)
 handler.__name__ = "dex_handler"
 handler = tracer.capture_lambda_handler(handler)
 handler = logger.inject_lambda_context(handler, clear_state=True)
+handler = metrics.log_metrics(handler, capture_cold_start_metric=True)
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=9000)
