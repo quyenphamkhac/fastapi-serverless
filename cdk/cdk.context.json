@@ -3,10 +3,10 @@
     "env": "development",
     "version": "1.0.0",
     "parameters": {
-      "repositoryName": "",
-      "imageName": "",
-      "imageTag": "",
-      "tableName": ""
+      "repositoryName": "fastapi-lambda",
+      "imageName": "666632162364.dkr.ecr.ap-southeast-1.amazonaws.com/fastapi-lambda",
+      "imageTag": "latest",
+      "tableName": "FastApiTable"
     }
   },
   "stag": {}
