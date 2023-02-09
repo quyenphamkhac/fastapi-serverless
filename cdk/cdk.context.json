@@ -1,0 +1,13 @@
+{
+  "dev": {
+    "env": "development",
+    "version": "1.0.0",
+    "parameters": {
+      "repositoryName": "",
+      "imageName": "",
+      "imageTag": "",
+      "tableName": ""
+    }
+  },
+  "stag": {}
+}
