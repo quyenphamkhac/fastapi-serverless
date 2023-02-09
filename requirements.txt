@@ -3,4 +3,5 @@ aws-lambda-powertools==2.7.1
 boto3==1.26.66
 fastapi==0.89.1
 mangum==0.17.0
+uvicorn==0.20.0
 aws-lambda-powertools[tracer]
