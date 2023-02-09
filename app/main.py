@@ -49,6 +49,16 @@ def get_root():
     return {"message": "FastAPI running in a lambda function"}
 
 
+@app.get("/hello")
+def get_hello_message():
+    POWERTOOLS_SERVICE_NAME = os.environ.get("POWERTOOLS_SERVICE_NAME")
+    POWERTOOLS_METRICS_NAMESPACE = os.getenv("POWERTOOLS_METRICS_NAMESPACE")
+    metrics.add_metric(name="GetRoot", unit=MetricUnit.Count, value=1)
+    logger.info(
+        f"Test fastapi with aws powertools {POWERTOOLS_SERVICE_NAME} {POWERTOOLS_METRICS_NAMESPACE}")
+    return {"message": "FastAPI running in a lambda function, Hello"}
+
+
 handler = Mangum(app)
 handler.__name__ = "dex_handler"
 handler = tracer.capture_lambda_handler(handler)
